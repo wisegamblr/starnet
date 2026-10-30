@@ -2,6 +2,8 @@
 const assert = require('assert');
 const { projectHistoricalEvidence } = require('../sidecar/historical-evidence-projection');
 const Goals = require('../frontend/app/goals.js');
+const NOW = Date.UTC(2026, 9, 29, 12, 0, 0);
+function project(input) { return projectHistoricalEvidence({ ...input, now: () => NOW }); }
 
 function target(goalId, milestoneId, projectId, projectRoot) { return { goalId, milestoneId, projectId, projectRoot }; }
 function run(runId, t, extra = {}) {
@@ -13,7 +15,7 @@ function run(runId, t, extra = {}) {
 (function emailInterviewCase() {
   const t = target('goal_1793146919407', 'goal_1793146919407:m2', 'email-interview', 'C:/Projects/Email Interview');
   const before = { status: 'active', done: 1, total: 5, xp: 0, points: 0 };
-  const result = projectHistoricalEvidence({ targets: [t], projectRoot: t.projectRoot,
+  const result = project({ targets: [t], projectRoot: t.projectRoot,
     runs: [run('email-i02', t, { title: 'Interview Coach I-02 pilot' }), run('email-qa', t, { title: 'Email safety validation' })],
     tasks: [], controllerLedger: [], canonicalProgress: before });
   assert.strictEqual(result.items.length, 2);
@@ -27,7 +29,7 @@ function run(runId, t, extra = {}) {
 
 (function youtubeCase() {
   const t = target('goal_1793148657080', 'goal_1793148657080:m1', 'youtube-channels', 'C:/Projects/YouTube Channels');
-  const result = projectHistoricalEvidence({ targets: [t], projectRoot: t.projectRoot,
+  const result = project({ targets: [t], projectRoot: t.projectRoot,
     runs: [run('yt-001-run', t, { title: 'yt-001', completionEvidence: { completionVerdict: 'failed_acceptance_criteria' } }),
       run('yt-004-run', t, { title: 'yt-004', completionEvidence: { completionVerdict: 'blocked_by_dependency' } })],
     tasks: [{ task_id: 'yt-001', status: 'needs_correction', run_id: 'yt-001-controller' },

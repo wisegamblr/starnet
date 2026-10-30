@@ -31,6 +31,7 @@ function readOnlyItem(row, sourceType) {
 }
 function makeHistoricalEvidenceHost(deps) {
   deps = deps || {};
+  if (typeof deps.now !== 'function') throw new TypeError('historical evidence host requires deps.now');
   return {
     async snapshot() {
       const items = [];
@@ -48,7 +49,7 @@ function makeHistoricalEvidenceHost(deps) {
       try { deliverables = array(await Promise.resolve(deps.readDeliverables && deps.readDeliverables())); } catch (_) { deliverables = []; }
       runs.forEach(row => add(row, 'run'));
       deliverables.forEach(row => add(row, 'deliverable'));
-      return { schemaVersion: 'starnet.historical-evidence-projection.v1', generatedAt: new Date().toISOString(), readOnly: true, items, displayStatus: DISPLAY_STATUS,
+      return { schemaVersion: 'starnet.historical-evidence-projection.v1', generatedAt: new Date(deps.now()).toISOString(), readOnly: true, items, displayStatus: DISPLAY_STATUS,
         safety: { canonicalMutationPerformed: false, xpAwarded: false, commanderPointsAwarded: false, historicalEventsInvented: false, completionSettlementPerformed: false } };
     }
   };

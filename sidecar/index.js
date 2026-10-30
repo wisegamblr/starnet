@@ -27969,7 +27969,7 @@ function serveRecipeDrift(req, res) {
 function handleHistoricalEvidence(req, res) {
   const json = (code, obj) => respondJson(res, code, obj);
   try {
-    const host = makeHistoricalEvidenceHost({ readRuns: () => runStore.all(), readDeliverables: () => [] });
+    const host = makeHistoricalEvidenceHost({ now: () => Date.now(), readRuns: () => runStore.all(), readDeliverables: () => [] });
     return Promise.resolve(host.snapshot()).then(snapshot => json(200, snapshot)).catch(() => json(200, { schemaVersion: 'starnet.historical-evidence-projection.v1', readOnly: true, items: [], displayStatus: 'Related work observed — not yet settled as milestone completion.', safety: { canonicalMutationPerformed: false, xpAwarded: false, commanderPointsAwarded: false, historicalEventsInvented: false, completionSettlementPerformed: false }, limitations: ['Evidence provider unavailable.'] }));
   } catch (_) {
     return json(200, { schemaVersion: 'starnet.historical-evidence-projection.v1', readOnly: true, items: [], displayStatus: 'Related work observed — not yet settled as milestone completion.', safety: { canonicalMutationPerformed: false, xpAwarded: false, commanderPointsAwarded: false, historicalEventsInvented: false, completionSettlementPerformed: false }, limitations: ['Evidence provider unavailable.'] });

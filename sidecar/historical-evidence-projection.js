@@ -122,6 +122,7 @@ function evidenceEligible(run, task, ledger, refs, targets) {
  * @param {object[]} [input.researchArtifacts] - optional artifact metadata rows
  */
 function projectHistoricalEvidence(input) {
+  if (!input || typeof input.now !== 'function') throw new TypeError('historical evidence projection requires input.now');
   const targets = asArray(input.targets);
   const project = input.project || {};
   const tasks = asArray(input.tasks && input.tasks.tasks ? input.tasks.tasks : input.tasks);
@@ -183,7 +184,7 @@ function projectHistoricalEvidence(input) {
   const counts = items.reduce((out, item) => { out[item.sourceKind] = (out[item.sourceKind] || 0) + 1; return out; }, {});
   return {
     schemaVersion: 'starnet.historical-evidence-projection.v1',
-    generatedAt: new Date().toISOString(), readOnly: true, displayStatus: DISPLAY_STATUS,
+    generatedAt: new Date(input.now()).toISOString(), readOnly: true, displayStatus: DISPLAY_STATUS,
     targets, canonicalProgress: input.canonicalProgress || null,
     items, counts,
     safety: { canonicalMutationPerformed: false, xpAwarded: false, commanderPointsAwarded: false, historicalEventsInvented: false,
